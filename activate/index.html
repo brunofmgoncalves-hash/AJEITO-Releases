@@ -7,13 +7,13 @@
   <title>AJEITO — Ativar acesso</title>
   <style>
     :root{font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#0A1A3A;background:#F7F9FC}
-    *{box-sizing:border-box}
-    body{margin:0;min-height:100vh;display:grid;place-items:center;padding:24px;background:#F7F9FC}
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:24px;background:#F7F9FC}
     .card{width:min(520px,100%);background:#fff;border:1px solid #E4E7EC;border-radius:20px;padding:28px;box-shadow:0 12px 40px rgba(10,26,58,.08)}
-    .brand{font-size:30px;font-weight:800;margin-bottom:6px}.sub{color:#667085;margin-bottom:24px}
-    .field{display:flex;flex-direction:column;gap:7px;margin:14px 0}.field label{font-size:13px;font-weight:700}.field input{height:48px;border:1px solid #D0D5DD;border-radius:12px;padding:0 14px;font-size:16px}
-    .btn{width:100%;height:50px;border:0;border-radius:12px;background:#0A1A3A;color:#fff;font-size:16px;font-weight:700;cursor:pointer;margin-top:12px}
+    .brand{font-size:30px;font-weight:800;margin-bottom:6px}.sub{color:#667085;margin-bottom:24px}.field{display:flex;flex-direction:column;gap:7px;margin:14px 0}
+    .field label{font-size:13px;font-weight:700}.field input{height:48px;border:1px solid #D0D5DD;border-radius:12px;padding:0 14px;font-size:16px}
+    .btn,.download{width:100%;min-height:50px;border:0;border-radius:12px;background:#0A1A3A;color:#fff;font-size:16px;font-weight:700;cursor:pointer;margin-top:12px;text-decoration:none;display:flex;align-items:center;justify-content:center;text-align:center;padding:12px}
     .btn:disabled{opacity:.55;cursor:not-allowed}.msg{margin-top:16px;padding:12px 14px;border-radius:10px;display:none}.ok{display:block;background:#ECFDF3;color:#067647}.err{display:block;background:#FEF3F2;color:#B42318}.small{font-size:12px;color:#667085;margin-top:16px;line-height:1.5}
+    .install{display:none;margin-top:20px;padding-top:18px;border-top:1px solid #E4E7EC}.install h3{margin:0 0 6px;font-size:17px}.install p{margin:0;color:#667085;font-size:13px;line-height:1.5}.pending{margin-top:12px;padding:12px;border-radius:10px;background:#F2F4F7;color:#475467;font-size:13px}
   </style>
 </head>
 <body>
@@ -28,46 +28,42 @@
       <button id="submit" class="btn" type="submit">Definir password</button>
     </form>
     <div id="msg" class="msg"></div>
-    <div class="small">Depois de definires a password, abre a app AJEITO Mobile e escolhe <strong>Entrar como colaborador</strong>.</div>
+    <section id="install" class="install">
+      <h3>Instalar AJEITO Mobile</h3>
+      <p>Android Beta. Depois da instalação entra com o mesmo email e a password que acabaste de definir.</p>
+      <a id="download" class="download" href="#" hidden>Instalar AJEITO Mobile</a>
+      <div id="installStatus" class="pending">A verificar a versão disponível...</div>
+    </section>
+    <div class="small">No Android Beta pode ser necessário autorizar a instalação de aplicações externas. Quando o AJEITO estiver na Play Store, este passo deixa de ser necessário.</div>
   </main>
 <script>
 const SUPABASE_URL='https://okerzezopjkzjuafyrvn.supabase.co';
 const APIKEY='sb_publishable_7opjr-2Wo98eUUXlH20weA_zoEantm7';
+const INSTALL_MANIFEST='../mobile/install.json';
 const params=new URLSearchParams(window.location.hash.replace(/^#/,''));
 const access=params.get('access_token');
-const loading=document.getElementById('loading');
-const form=document.getElementById('form');
-const msg=document.getElementById('msg');
-const submit=document.getElementById('submit');
+const loading=document.getElementById('loading');const form=document.getElementById('form');const msg=document.getElementById('msg');const submit=document.getElementById('submit');
+const install=document.getElementById('install');const download=document.getElementById('download');const installStatus=document.getElementById('installStatus');
 function show(text,ok=false){msg.textContent=text;msg.className='msg '+(ok?'ok':'err');}
+async function loadInstall(){
+  install.style.display='block';
+  try{
+    const r=await fetch(INSTALL_MANIFEST+'?t='+Date.now(),{cache:'no-store'});const data=await r.json();
+    if(data.available&&data.url){download.href=data.url;download.hidden=false;installStatus.style.display='none';download.textContent='Instalar AJEITO Mobile v'+(data.version||'');}
+    else{download.hidden=true;installStatus.style.display='block';installStatus.textContent=data.message||'A versão Android ainda não está disponível.';}
+  }catch(e){installStatus.textContent='Não foi possível verificar a versão Android neste momento.';}
+}
 async function init(){
   if(!access){loading.textContent='Convite inválido ou já expirado.';show('Pede ao administrador para reenviar o convite.');return;}
-  try{
-    const r=await fetch(SUPABASE_URL+'/auth/v1/user',{headers:{apikey:APIKEY,Authorization:'Bearer '+access}});
-    const u=await r.json();
-    if(!r.ok) throw new Error(u?.msg||u?.message||'Não foi possível validar o convite.');
-    document.getElementById('email').value=u.email||'';
-    loading.hidden=true;
-    form.hidden=false;
-  }catch(e){loading.textContent='Não foi possível validar o convite.';show(String(e.message||e));}
+  try{const r=await fetch(SUPABASE_URL+'/auth/v1/user',{headers:{apikey:APIKEY,Authorization:'Bearer '+access}});const u=await r.json();if(!r.ok)throw new Error(u?.msg||u?.message||'Não foi possível validar o convite.');document.getElementById('email').value=u.email||'';loading.hidden=true;form.hidden=false;}
+  catch(e){loading.textContent='Não foi possível validar o convite.';show(String(e.message||e));}
 }
 form.addEventListener('submit',async(e)=>{
-  e.preventDefault();
-  const p1=document.getElementById('p1').value;
-  const p2=document.getElementById('p2').value;
-  if(p1.length<8){show('A password deve ter pelo menos 8 caracteres.');return;}
-  if(p1!==p2){show('As passwords não coincidem.');return;}
-  submit.disabled=true;
-  submit.textContent='A guardar...';
-  try{
-    const r=await fetch(SUPABASE_URL+'/auth/v1/user',{method:'PUT',headers:{apikey:APIKEY,Authorization:'Bearer '+access,'Content-Type':'application/json'},body:JSON.stringify({password:p1})});
-    const d=await r.json();
-    if(!r.ok) throw new Error(d?.msg||d?.message||'Não foi possível definir a password.');
-    form.hidden=true;
-    loading.hidden=true;
-    show('Password definida com sucesso. Já podes entrar no AJEITO Mobile.',true);
-    history.replaceState(null,'',location.pathname+location.search);
-  }catch(e){show(String(e.message||e));submit.disabled=false;submit.textContent='Definir password';}
+  e.preventDefault();const p1=document.getElementById('p1').value;const p2=document.getElementById('p2').value;
+  if(p1.length<8){show('A password deve ter pelo menos 8 caracteres.');return;}if(p1!==p2){show('As passwords não coincidem.');return;}
+  submit.disabled=true;submit.textContent='A guardar...';
+  try{const r=await fetch(SUPABASE_URL+'/auth/v1/user',{method:'PUT',headers:{apikey:APIKEY,Authorization:'Bearer '+access,'Content-Type':'application/json'},body:JSON.stringify({password:p1})});const d=await r.json();if(!r.ok)throw new Error(d?.msg||d?.message||'Não foi possível definir a password.');form.hidden=true;loading.hidden=true;show('Password definida com sucesso.',true);history.replaceState(null,'',location.pathname+location.search);await loadInstall();}
+  catch(e){show(String(e.message||e));submit.disabled=false;submit.textContent='Definir password';}
 });
 init();
 </script>
