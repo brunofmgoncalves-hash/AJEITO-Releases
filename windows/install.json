@@ -1,0 +1,13 @@
+{
+  "available": false,
+  "version": "0.18.9",
+  "platform": "windows-x64",
+  "channel": "beta",
+  "url": "",
+  "sha256": "1a4c83ad1ac99ca5e0a6ec5c1d95444f7e0148f2e3a89224f99d104477df02da",
+  "build_status": "final concluída com sucesso",
+  "smoke_test": "passou",
+  "global_qa": "passou",
+  "external_publication": "pendente",
+  "message": "Build Desktop 0.18.9 validada localmente; publicação externa ainda não efetuada."
+}
