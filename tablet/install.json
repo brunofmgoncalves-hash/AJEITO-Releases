@@ -1,0 +1,11 @@
+{
+  "available": true,
+  "version": "0.18.9",
+  "build": "18901",
+  "platform": "android-tablet",
+  "channel": "beta",
+  "release_tag": "tablet-r6-0.18.9",
+  "url": "https://github.com/brunofmgoncalves-hash/AJEITO-Releases/releases/download/tablet-r6-0.18.9/AJEITO_Tablet_Staging_R6_QA1_0.18.9_18901.apk",
+  "sha256": "5994075d1cc8ab8db3c219cb93b48e161802a0b5e2302ece5d6c3b88a45aa714",
+  "message": "AJEITO Tablet Beta R6 — build de teste físico Android."
+}
