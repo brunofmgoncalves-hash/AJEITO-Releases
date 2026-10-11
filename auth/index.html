@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex,nofollow">
+  <title>AJEITO — Conta</title>
+  <style>
+    :root{font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#0A1A3A;background:#F7F9FC}
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:24px;background:#F7F9FC}
+    .card{width:min(520px,100%);background:#fff;border:1px solid #E4E7EC;border-radius:20px;padding:28px;box-shadow:0 12px 40px rgba(10,26,58,.08)}
+    .brand{font-size:30px;font-weight:800;margin-bottom:6px}.sub{color:#667085;margin-bottom:24px}
+    .field{display:flex;flex-direction:column;gap:7px;margin:14px 0}.field label{font-size:13px;font-weight:700}
+    .field input{height:48px;border:1px solid #D0D5DD;border-radius:12px;padding:0 14px;font-size:16px}
+    .btn{width:100%;min-height:50px;border:0;border-radius:12px;background:#0A1A3A;color:#fff;font-size:16px;font-weight:700;cursor:pointer;margin-top:12px}
+    .btn:disabled{opacity:.55;cursor:not-allowed}.msg{margin-top:16px;padding:12px 14px;border-radius:10px;display:none}
+    .ok{display:block;background:#ECFDF3;color:#067647}.err{display:block;background:#FEF3F2;color:#B42318}
+    .small{font-size:12px;color:#667085;margin-top:16px;line-height:1.5}
+  </style>
+</head>
+<body>
+  <main class="card">
+    <div class="brand">AJEITO</div>
+    <div id="subtitle" class="sub">Conta AJEITO</div>
+    <div id="loading">A validar o acesso...</div>
+
+    <form id="form" hidden>
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" type="email" readonly>
+      </div>
+      <div class="field">
+        <label for="p1">Nova password</label>
+        <input id="p1" type="password" minlength="8" autocomplete="new-password" required placeholder="Mínimo 8 caracteres">
+      </div>
+      <div class="field">
+        <label for="p2">Confirmar password</label>
+        <input id="p2" type="password" minlength="8" autocomplete="new-password" required>
+      </div>
+      <button id="submit" class="btn" type="submit">Guardar nova password</button>
+    </form>
+
+    <div id="msg" class="msg"></div>
+    <div id="hint" class="small"></div>
+  </main>
+
+<script>
+const SUPABASE_URL='https://okerzezopjkzjuafyrvn.supabase.co';
+const APIKEY='sb_publishable_7opjr-2Wo98eUUXlH20weA_zoEantm7';
+
+const hash=new URLSearchParams(window.location.hash.replace(/^#/,''));
+const query=new URLSearchParams(window.location.search);
+
+const access=hash.get('access_token');
+const type=hash.get('type') || query.get('type') || '';
+
+const loading=document.getElementById('loading');
+const form=document.getElementById('form');
+const msg=document.getElementById('msg');
+const submit=document.getElementById('submit');
+const subtitle=document.getElementById('subtitle');
+const hint=document.getElementById('hint');
+
+function show(text,ok=false){
+  msg.textContent=text;
+  msg.className='msg '+(ok?'ok':'err');
+}
+
+function setMode(){
+  if(type==='recovery'){
+    subtitle.textContent='Recuperar password';
+    submit.textContent='Definir nova password';
+    hint.textContent='Depois de definires a nova password, volta à aplicação AJEITO e inicia sessão.';
+  } else if(type==='invite'){
+    subtitle.textContent='Ativar acesso';
+    submit.textContent='Definir password';
+    hint.textContent='Depois de definires a password, volta à aplicação AJEITO e inicia sessão.';
+  } else {
+    subtitle.textContent='Conta AJEITO';
+    hint.textContent='Se chegaste aqui através de um email AJEITO, valida o acesso e conclui a configuração.';
+  }
+}
+
+async function init(){
+  setMode();
+
+  if(!access){
+    loading.textContent='Link inválido ou expirado.';
+    show('Pede um novo email de recuperação ou ativação.');
+    return;
+  }
+
+  try{
+    const r=await fetch(SUPABASE_URL+'/auth/v1/user',{
+      headers:{apikey:APIKEY,Authorization:'Bearer '+access}
+    });
+    const u=await r.json();
+
+    if(!r.ok) throw new Error(u?.msg||u?.message||'Não foi possível validar o acesso.');
+
+    document.getElementById('email').value=u.email||'';
+    loading.hidden=true;
+    form.hidden=false;
+  }catch(e){
+    loading.textContent='Não foi possível validar o acesso.';
+    show(String(e.message||e));
+  }
+}
+
+form.addEventListener('submit',async(e)=>{
+  e.preventDefault();
+
+  const p1=document.getElementById('p1').value;
+  const p2=document.getElementById('p2').value;
+
+  if(p1.length<8){show('A password deve ter pelo menos 8 caracteres.');return;}
+  if(p1!==p2){show('As passwords não coincidem.');return;}
+
+  submit.disabled=true;
+  submit.textContent='A guardar...';
+
+  try{
+    const r=await fetch(SUPABASE_URL+'/auth/v1/user',{
+      method:'PUT',
+      headers:{
+        apikey:APIKEY,
+        Authorization:'Bearer '+access,
+        'Content-Type':'application/json'
+      },
+      body:JSON.stringify({password:p1})
+    });
+
+    const d=await r.json();
+    if(!r.ok) throw new Error(d?.msg||d?.message||'Não foi possível definir a password.');
+
+    form.hidden=true;
+    loading.hidden=true;
+    show('Password definida com sucesso. Já podes voltar ao AJEITO e iniciar sessão.',true);
+    history.replaceState(null,'',location.pathname);
+  }catch(e){
+    show(String(e.message||e));
+    submit.disabled=false;
+    submit.textContent=type==='invite'?'Definir password':'Definir nova password';
+  }
+});
+
+init();
+</script>
+</body>
+</html>
