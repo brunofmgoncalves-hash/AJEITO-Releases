@@ -1,0 +1,16 @@
+{
+  "contract_version": "1.0",
+  "available": false,
+  "client": "tablet-android",
+  "platform": "android",
+  "channel": "stable",
+  "version": null,
+  "build": null,
+  "artifact_type": "apk",
+  "artifact_url": null,
+  "sha256": null,
+  "update_mode": "optional",
+  "package_id": null,
+  "published_at": null,
+  "release_notes": "Canal ainda não publicado."
+}
