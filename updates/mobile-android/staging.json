@@ -1,5 +1,5 @@
 {
-  "contract_version": "1.0",
+  "contract_version": "1.1",
   "available": false,
   "client": "mobile-android",
   "platform": "android",
@@ -10,7 +10,9 @@
   "artifact_url": null,
   "sha256": null,
   "update_mode": "optional",
-  "package_id": null,
+  "package_id": "pt.omeuajeito.mobile.staging",
+  "signing_cert_sha256": null,
+  "signing_status": "permanent staging keystore pending definition",
   "published_at": null,
   "release_notes": "Canal ainda não publicado."
 }
