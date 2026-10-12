@@ -1,5 +1,5 @@
 {
-  "contract_version": "1.0",
+  "contract_version": "1.1",
   "available": true,
   "client": "tablet-android",
   "platform": "android",
@@ -10,9 +10,11 @@
   "artifact_url": "https://github.com/brunofmgoncalves-hash/AJEITO-Releases/releases/download/tablet-r6-0.18.9/AJEITO_Tablet_Staging_R6_QA1_0.18.9_18901.apk",
   "sha256": "5994075d1cc8ab8db3c219cb93b48e161802a0b5e2302ece5d6c3b88a45aa714",
   "update_mode": "optional",
-  "package_id": null,
-  "package_id_status": "pending_verification_from_client_source",
-  "signing_status": "must_be_verified_before_in_app_upgrade_enforcement",
+  "package_id": "pt.omeuajeito.ajeito.tablet.staging",
+  "package_id_status": "legacy staging package for already-published APK; next normalized staging build must use pt.omeuajeito.tablet.staging",
+  "next_package_id": "pt.omeuajeito.tablet.staging",
+  "signing_cert_sha256": null,
+  "signing_status": "current test APK signature not yet pinned; permanent staging keystore pending definition",
   "published_at": "2026-10-11T18:13:41Z",
-  "release_notes": "Tablet R6 QA1 — build de teste físico Android."
+  "release_notes": "Tablet R6 QA1 — current physical-test APK. Legacy staging package retained in this manifest only to describe the published artifact."
 }
