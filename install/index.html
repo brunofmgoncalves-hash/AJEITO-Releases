@@ -24,7 +24,7 @@ h1{margin:0 0 6px}.sub{color:#667085;margin-bottom:22px}.status{padding:14px;bor
 (async()=>{
  const s=document.getElementById('status'), b=document.getElementById('download'), m=document.getElementById('meta');
  try{
-  const r=await fetch('../tablet/install.json?t='+Date.now(),{cache:'no-store'});
+  const r=await fetch('../updates/tablet-android/staging.json?t='+Date.now(),{cache:'no-store'});
   const d=await r.json();
   if(d.available && d.url){
    b.href=d.url;b.hidden=false;b.textContent='Instalar AJEITO Tablet '+(d.version?('v'+d.version):'');
