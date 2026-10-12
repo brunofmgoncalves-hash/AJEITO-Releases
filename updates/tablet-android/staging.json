@@ -1,0 +1,18 @@
+{
+  "contract_version": "1.0",
+  "available": true,
+  "client": "tablet-android",
+  "platform": "android",
+  "channel": "staging",
+  "version": "0.18.9",
+  "build": 18901,
+  "artifact_type": "apk",
+  "artifact_url": "https://github.com/brunofmgoncalves-hash/AJEITO-Releases/releases/download/tablet-r6-0.18.9/AJEITO_Tablet_Staging_R6_QA1_0.18.9_18901.apk",
+  "sha256": "5994075d1cc8ab8db3c219cb93b48e161802a0b5e2302ece5d6c3b88a45aa714",
+  "update_mode": "optional",
+  "package_id": null,
+  "package_id_status": "pending_verification_from_client_source",
+  "signing_status": "must_be_verified_before_in_app_upgrade_enforcement",
+  "published_at": "2026-10-11T18:13:41Z",
+  "release_notes": "Tablet R6 QA1 — build de teste físico Android."
+}
