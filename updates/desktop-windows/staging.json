@@ -1,0 +1,16 @@
+{
+  "contract_version": "1.0",
+  "available": false,
+  "client": "desktop-windows",
+  "platform": "windows-x64",
+  "channel": "staging",
+  "version": "0.18.9",
+  "build": 18900,
+  "artifact_type": "exe",
+  "artifact_url": null,
+  "sha256": "1a4c83ad1ac99ca5e0a6ec5c1d95444f7e0148f2e3a89224f99d104477df02da",
+  "update_mode": "optional",
+  "package_id": null,
+  "published_at": null,
+  "release_notes": "Build final concluída com sucesso; smoke test e QA global passaram. Publicação externa pendente."
+}
