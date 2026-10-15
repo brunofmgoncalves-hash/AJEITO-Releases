@@ -26,12 +26,12 @@ h1{margin:0 0 6px}.sub{color:#667085;margin-bottom:22px}.status{padding:14px;bor
  try{
   const r=await fetch('../updates/tablet-android/staging.json?t='+Date.now(),{cache:'no-store'});
   const d=await r.json();
-  if(d.available && d.url){
-   b.href=d.url;b.hidden=false;b.textContent='Instalar AJEITO Tablet '+(d.version?('v'+d.version):'');
+  const artifactUrl=d.artifact_url||d.url;\n  if(d.available && artifactUrl){
+   b.href=artifactUrl;b.hidden=false;b.textContent='Instalar AJEITO Tablet '+(d.version?('v'+d.version):'');
    s.textContent='Versão Beta disponível.';
    m.textContent=(d.version?'Versão '+d.version:'')+(d.build?' · build '+d.build:'');
   }else{
-   s.textContent=d.message||'Ainda não existe versão Android publicada.';
+   s.textContent=d.message||d.release_notes||'Ainda não existe versão Android publicada.';
   }
  }catch(e){s.textContent='Não foi possível verificar a versão neste momento.'}
 })();
